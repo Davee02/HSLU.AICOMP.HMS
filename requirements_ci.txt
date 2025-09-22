@@ -1,0 +1,2 @@
+# Pull all libraries from base requirements file
+-r requirements.txt
