@@ -1,6 +1,11 @@
-# DataScience Project Template
+# AICOMP HS25: HMS - Harmful Brain Activity Classification
 
-A template with `src` and `tests` already prepared, based on Python 3.11.9 and Torch 2.3.1 (same as on GPUHub).
+https://www.kaggle.com/competitions/hms-harmful-brain-activity-classification/
+
+## Authors
+
+- David Hodel (david.hodel@stud.hslu.ch)
+- Maiko Trede (maiko.trede@stud.hslu.ch)
 
 ## Structure
 
