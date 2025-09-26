@@ -1,8 +1,11 @@
-# Add needed packages for project
 coverage>=6
 torch==2.3.1
 torchvision==0.18.1
 torchaudio==2.3.1
 pytest>=7
 parameterized==0.9.0
-kaggle==1.6.17
+kaggle==1.6.17 # cannot use the version >=1.7.0 due to the following bug: https://github.com/Kaggle/kaggle-api/issues/754
+pandas==2.3.2
+matplotlib==3.10.6
+seaborn==0.13.2
+pyarrow==21.0.0
