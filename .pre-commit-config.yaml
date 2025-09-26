@@ -41,10 +41,10 @@ repos:
       rev: v1.8.1
       hooks:
           - id: darglint
-    - repo: https://github.com/srstevenson/nb-clean
-      rev: 3.3.0
-      hooks:
-          - id: nb-clean
-            args:
-                - --remove-empty-cells
-                - --preserve-cell-metadata
+    # - repo: https://github.com/srstevenson/nb-clean
+    #   rev: 4.0.1
+    #   hooks:
+    #       - id: nb-clean
+    #         args:
+    #             - --remove-empty-cells
+    #             - --preserve-cell-metadata
