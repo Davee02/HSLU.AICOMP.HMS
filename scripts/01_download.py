@@ -14,9 +14,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-download_path = (
-    args.target_dir if args.target_dir else Path(__file__).parent.parent / Path("data")
-)
+download_path = args.target_dir if args.target_dir else Path(__file__).parent.parent / Path("data")
 if not download_path.exists():
     raise ValueError(f"The target download directory {download_path} does not exist")
 
