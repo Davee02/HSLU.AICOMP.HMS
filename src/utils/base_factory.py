@@ -20,9 +20,7 @@ class BaseFactory:
         def inner_wrapper(wrapped_class: cls.base_class) -> cls.base_class:
             name = wrapped_class.__name__
             if name in cls.registry:
-                cls.logger.warning(
-                    f"{cls.base_class.__name__} {name} already exists, will replace it."
-                )
+                cls.logger.warning(f"{cls.base_class.__name__} {name} already exists, will replace it.")
             cls.registry[name] = wrapped_class
             return wrapped_class
 
@@ -43,9 +41,7 @@ class BaseFactory:
         :raises KeyError: If the class name is not in the registry.
         """
         if class_name not in cls.registry:
-            raise KeyError(
-                f"{cls.base_class.__name__} {class_name} is not in the registry."
-            )
+            raise KeyError(f"{cls.base_class.__name__} {class_name} is not in the registry.")
         class_ = cls.registry[class_name]
         if hasattr(class_, "from_config"):
             instance = class_.from_config(kwargs)
