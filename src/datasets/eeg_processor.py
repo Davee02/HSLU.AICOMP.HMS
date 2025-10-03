@@ -1,8 +1,11 @@
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from tqdm.notebook import tqdm
+
+from src.utils.constants import Constants
 
 
 class EEGDataProcessor:
@@ -11,49 +14,17 @@ class EEGDataProcessor:
     and a processed CSV file for machine learning tasks.
     """
 
-    TARGETS = [
-        "seizure_vote",
-        "lpd_vote",
-        "gpd_vote",
-        "lrda_vote",
-        "grda_vote",
-        "other_vote",
-    ]
-    EEG_FEATURES = [
-        "Fp1",
-        "F3",
-        "C3",
-        "P3",
-        "F7",
-        "T3",
-        "T5",
-        "O1",
-        "Fp2",
-        "F4",
-        "C4",
-        "P4",
-        "F8",
-        "T4",
-        "T6",
-        "O2",
-        "EKG",
-        "Fz",
-        "Cz",
-        "Pz",
-    ]
-    EEG_ID_COL = "eeg_id"
-
     def __init__(
         self,
-        raw_data_path: str = "../data/",
-        processed_data_path: str = "../data/processed/",
+        raw_data_path: Path,
+        processed_data_path: Path,
     ):
         """
         Initializes the processor with specified data paths.
 
         Args:
-            raw_data_path (str): The path to the directory containing raw data (e.g., 'train.csv', 'train_eegs/').
-            processed_data_path (str): The path where processed files will be saved.
+            raw_data_path (Path): The path to the directory containing raw data (e.g., 'train.csv', 'train_eegs/').
+            processed_data_path (Path): The path where processed files will be saved.
         """
         self.RAW_DATA_PATH = raw_data_path
         self.PROCESSED_DATA_PATH = processed_data_path
@@ -73,15 +44,15 @@ class EEGDataProcessor:
         Reads a single Parquet file, extracts the middle 50 seconds (10,000 rows),
         handles NaN values, and returns the data as a NumPy array.
         """
-        eeg = pd.read_parquet(parquet_path, columns=EEGDataProcessor.EEG_FEATURES)
+        eeg = pd.read_parquet(parquet_path, columns=Constants.EEG_FEATURES)
 
         rows = len(eeg)
         offset = (rows - 10_000) // 2
         eeg = eeg.iloc[offset : offset + 10_000]
 
-        processed_data = np.zeros((10_000, len(EEGDataProcessor.EEG_FEATURES)), dtype=np.float32)
+        processed_data = np.zeros((10_000, len(Constants.EEG_FEATURES)), dtype=np.float32)
 
-        for j, col in enumerate(EEGDataProcessor.EEG_FEATURES):
+        for j, col in enumerate(Constants.EEG_FEATURES):
             signal = eeg[col].values.astype("float32")
 
             if np.isnan(signal).mean() < 1.0:
@@ -125,7 +96,7 @@ class EEGDataProcessor:
             "expert_consensus": "first",
         }
 
-        agg_df = df.groupby(self.EEG_ID_COL).agg({**agg_dict, **{t: "sum" for t in self.TARGETS}})
+        agg_df = df.groupby(Constants.EEG_ID_COL).agg({**agg_dict, **{t: "sum" for t in Constants.TARGETS}})
 
         agg_df.columns = [
             "spectrogram_id",
@@ -133,10 +104,10 @@ class EEGDataProcessor:
             "max_offset",
             "patient_id",
             "expert_consensus",
-        ] + self.TARGETS
+        ] + Constants.TARGETS
 
-        vote_values = agg_df[self.TARGETS].values
-        agg_df[self.TARGETS] = vote_values / (vote_values.sum(axis=1, keepdims=True) + 1e-9)
+        vote_values = agg_df[Constants.TARGETS].values
+        agg_df[Constants.TARGETS] = vote_values / (vote_values.sum(axis=1, keepdims=True) + 1e-9)
 
         return agg_df.reset_index()
 
@@ -147,13 +118,13 @@ class EEGDataProcessor:
         """
         print("Using 'max_vote_window' vote aggregation strategy.")
 
-        df["total_votes"] = df[self.TARGETS].sum(axis=1)
-        idx = df.groupby(self.EEG_ID_COL)["total_votes"].idxmax()
+        df["total_votes"] = df[Constants.TARGETS].sum(axis=1)
+        idx = df.groupby(Constants.EEG_ID_COL)["total_votes"].idxmax()
         max_vote_df = df.loc[idx].copy()
 
-        vote_values = max_vote_df[self.TARGETS].values
+        vote_values = max_vote_df[Constants.TARGETS].values
         normalized_votes = vote_values / (vote_values.sum(axis=1, keepdims=True) + 1e-9)
-        max_vote_df[self.TARGETS] = normalized_votes
+        max_vote_df[Constants.TARGETS] = normalized_votes
 
         return max_vote_df.drop(columns=["total_votes"]).reset_index(drop=True)
 
@@ -190,7 +161,7 @@ class EEGDataProcessor:
             raise ValueError("Invalid vote_method. Choose 'sum_and_normalize' or 'max_vote_window'.")
 
         # ensure each id_col appears only once
-        assert processed_df[self.EEG_ID_COL].nunique() == len(processed_df)
+        assert processed_df[Constants.EEG_ID_COL].nunique() == len(processed_df)
 
         processed_df.to_csv(self.OUTPUT_CSV, index=False)
         print(f"\nProcessed train data saved to '{self.OUTPUT_CSV}'.")
