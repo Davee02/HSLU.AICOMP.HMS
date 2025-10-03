@@ -36,3 +36,4 @@ class Constants:
     ]
 
     EEG_ID_COL = "eeg_id"
+    SEED = 42
