@@ -9,22 +9,35 @@ import torch
 
 from src.utils.constants import Constants
 
-SEED = 42
-
-
 RandomState = Union[np.random.Generator, np.random.RandomState, int, None]
 
 
-def get_data_dir() -> Path:
-    if os.environ.get("KAGGLE_URL_BASE", ""):
-        # running in Kaggle
+def get_raw_data_dir() -> Path:
+    if running_in_kaggle():
         return Constants.KAGGLE_DATA_BASE_PATH
     else:
-        # running locally
         return get_library_root() / "data"
 
 
-def set_seeds(seed: int = SEED):
+def get_processed_data_dir() -> Path:
+    if running_in_kaggle():
+        return Path("/kaggle/temp/processed")
+    else:
+        return get_library_root() / "data" / "processed"
+
+
+def get_submission_csv_path() -> Path:
+    if running_in_kaggle():
+        return Path("/kaggle/working/submission.csv")
+    else:
+        return get_library_root() / "data" / "submission.csv"
+
+
+def running_in_kaggle() -> bool:
+    return bool(os.environ.get("KAGGLE_URL_BASE", ""))
+
+
+def set_seeds(seed: int = Constants.SEED):
     """
     Set seed for various random generators.
 
