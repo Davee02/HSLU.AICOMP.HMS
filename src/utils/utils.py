@@ -7,10 +7,21 @@ from typing import Sequence, Union
 import numpy as np
 import torch
 
+from src.utils.constants import Constants
+
 SEED = 42
 
 
 RandomState = Union[np.random.Generator, np.random.RandomState, int, None]
+
+
+def get_data_dir() -> Path:
+    if os.environ.get("KAGGLE_URL_BASE", ""):
+        # running in Kaggle
+        return Constants.KAGGLE_DATA_BASE_PATH
+    else:
+        # running locally
+        return get_library_root() / "data"
 
 
 def set_seeds(seed: int = SEED):
