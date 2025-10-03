@@ -165,7 +165,7 @@ Examples:
         sys.exit(1)
 
     # Get the src/ path
-    src_path = Path(__file__).parent.parent / "src"
+    src_path = Path(__file__).parent.parent.parent / "src"
     src_path = src_path.resolve()
 
     # Create temporary directory
