@@ -33,6 +33,13 @@ def get_submission_csv_path() -> Path:
         return get_library_root() / "data" / "submission.csv"
 
 
+def get_models_save_path() -> Path:
+    if running_in_kaggle():
+        return Path("/kaggle/temp/models")
+    else:
+        return get_library_root() / "models"
+
+
 def running_in_kaggle() -> bool:
     return bool(os.environ.get("KAGGLE_URL_BASE", ""))
 
