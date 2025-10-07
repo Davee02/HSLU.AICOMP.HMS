@@ -17,4 +17,4 @@ env.bak/
 venv.bak/
 wandb/
 data/
-models/
+/models/
