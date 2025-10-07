@@ -119,14 +119,32 @@ class EEGDataProcessor:
         print("Using 'max_vote_window' vote aggregation strategy.")
 
         df["total_votes"] = df[Constants.TARGETS].sum(axis=1)
+
+        # Get the row with max votes for each eeg_id
         idx = df.groupby(Constants.EEG_ID_COL)["total_votes"].idxmax()
         max_vote_df = df.loc[idx].copy()
 
-        vote_values = max_vote_df[Constants.TARGETS].values
-        normalized_votes = vote_values / (vote_values.sum(axis=1, keepdims=True) + 1e-9)
-        max_vote_df[Constants.TARGETS] = normalized_votes
+        # Get min/max offsets for each eeg_id
+        offset_agg = df.groupby(Constants.EEG_ID_COL)["spectrogram_label_offset_seconds"].agg(["min", "max"])
+        offset_agg.columns = ["min_offset", "max_offset"]
 
-        return max_vote_df.drop(columns=["total_votes"]).reset_index(drop=True)
+        # Merge the offset information
+        max_vote_df = max_vote_df.merge(offset_agg, left_on=Constants.EEG_ID_COL, right_index=True, how="left")
+
+        # Normalize votes
+        vote_values = max_vote_df[Constants.TARGETS].values
+        max_vote_df[Constants.TARGETS] = vote_values / (vote_values.sum(axis=1, keepdims=True) + 1e-9)
+
+        return max_vote_df.drop(
+            columns=[
+                "total_votes",
+                "eeg_sub_id",
+                "eeg_label_offset_seconds",
+                "spectrogram_sub_id",
+                "spectrogram_label_offset_seconds",
+                "label_id",
+            ]
+        ).reset_index(drop=True)
 
     def process_data(self, vote_method: str = "sum_and_normalize", skip_npy: bool = False) -> pd.DataFrame:
         """
