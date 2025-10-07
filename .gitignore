@@ -5,7 +5,8 @@
 # Byte-compiled / optimized / DLL files
 **/__pycache__/
 *.py[cod]
-
+*.pth
+*.pt
 # Environments
 .env
 .venv
@@ -14,5 +15,5 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+wandb/
 data/
