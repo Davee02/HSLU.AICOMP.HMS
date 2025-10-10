@@ -33,9 +33,15 @@ def get_submission_csv_path() -> Path:
         return get_library_root() / "data" / "submission.csv"
 
 
-def get_models_save_path() -> Path:
+def get_models_save_path(kaggle_hsm_models_dataset_id: str = "") -> Path:
     if running_in_kaggle():
-        return Path("/kaggle/temp/models")
+        if kaggle_hsm_models_dataset_id:
+            # if a dataset name is provided, use it to load existing model checkpoints
+            return Path("/kaggle/input") / kaggle_hsm_models_dataset_id
+        else:
+            # if no dataset name is provided, use temp path
+            # can be the case when we want to train and save models in Kaggle and not load existing checkpoints
+            return Path("/kaggle/temp/models")
     else:
         return get_library_root() / "models"
 
