@@ -12,117 +12,39 @@ import sys
 import tempfile
 from pathlib import Path
 
-
-def get_kaggle_username():
-    """Extract Kaggle username from the API credentials."""
-    try:
-        kaggle_json_path = Path.home() / ".kaggle" / "kaggle.json"
-        if kaggle_json_path.exists():
-            with open(kaggle_json_path, "r") as f:
-                credentials = json.load(f)
-                return credentials.get("username")
-        else:
-            print("ERROR: Could not find kaggle.json credentials file")
-            return None
-    except Exception as e:
-        print(f"ERROR: Failed to read Kaggle credentials: {e}")
-        return None
+from kaggle_utils import (
+    create_kernel_slug,
+    get_kaggle_username,
+    kernel_exists,
+    parse_sources,
+)
 
 
-def kernel_exists(username, kernel_slug):
+def validate_notebook(notebook_path):
     """
-    Check if a kernel already exists on Kaggle.
-
-    Args:
-        username: Kaggle username
-        kernel_slug: Kernel slug (URL-friendly name)
-
-    Returns:
-        bool: True if kernel exists, False otherwise
-    """
-    try:
-        result = subprocess.run(
-            ["kaggle", "kernels", "status", f"{username}/{kernel_slug}"], capture_output=True, text=True, check=False
-        )
-        return result.returncode == 0
-    except Exception as e:
-        print(f"Error checking kernel existence: {e}")
-        return False
-
-
-def create_kernel_metadata(
-    notebook_path, kernel_title, kernel_slug, username, dataset_sources, competition_sources, temp_dir
-):
-    """
-    Create the kernel-metadata.json file required by Kaggle.
+    Validate that the notebook file exists and is a valid JSON file.
 
     Args:
         notebook_path: Path to the notebook file
-        kernel_title: Title of the kernel
-        kernel_slug: Kernel slug (URL-friendly name)
-        username: Kaggle username
-        dataset_sources: List of dataset sources (format: 'username/dataset-name')
-        competition_sources: List of competition sources (format: 'competition-name')
-        temp_dir: Temporary directory where metadata will be created
-    """
-    metadata = {
-        "id": f"{username}/{kernel_slug}",
-        "title": kernel_title,
-        "code_file": Path(notebook_path).name,
-        "language": "python",
-        "kernel_type": "notebook",
-        "is_private": True,
-        "enable_gpu": False,
-        "enable_tpu": False,
-        "enable_internet": True,
-        "dataset_sources": dataset_sources if dataset_sources else [],
-        "competition_sources": competition_sources if competition_sources else [],
-        "kernel_sources": [],
-    }
-
-    metadata_path = Path(temp_dir) / "kernel-metadata.json"
-    with open(metadata_path, "w") as f:
-        json.dump(metadata, f, indent=2)
-
-    print(f"Created metadata file: {metadata_path}")
-    print("\nKernel configuration:")
-    print(f"  ID: {metadata['id']}")
-    print(f"  Title: {metadata['title']}")
-    print(f"  Type: {metadata['kernel_type']}")
-    print(f"  Language: {metadata['language']}")
-    print(f"  Private: {metadata['is_private']}")
-    print(f"  GPU: {metadata['enable_gpu']}")
-    print(f"  Internet: {metadata['enable_internet']}")
-
-    if dataset_sources:
-        print(f"  Dataset sources: {', '.join(dataset_sources)}")
-    if competition_sources:
-        print(f"  Competition sources: {', '.join(competition_sources)}")
-
-    return metadata_path
-
-
-def create_kernel_slug(kernel_title):
-    """
-    Create a URL-friendly slug from the kernel title.
-
-    Args:
-        kernel_title: Title of the kernel
 
     Returns:
-        str: URL-friendly slug
+        bool: True if valid, False otherwise
     """
-    import re
+    if not notebook_path.exists():
+        print(f"ERROR: Notebook file not found: {notebook_path}")
+        return False
 
-    # Convert to lowercase
-    slug = kernel_title.lower()
-    # Replace spaces and special characters with hyphens
-    slug = re.sub(r"[^a-z0-9]+", "-", slug)
-    # Remove leading/trailing hyphens
-    slug = slug.strip("-")
-    # Replace multiple consecutive hyphens with single hyphen
-    slug = re.sub(r"-+", "-", slug)
-    return slug
+    if not notebook_path.suffix == ".ipynb":
+        print(f"ERROR: File must have .ipynb extension: {notebook_path}")
+        return False
+
+    try:
+        with open(notebook_path, "r") as f:
+            json.load(f)
+        return True
+    except json.JSONDecodeError:
+        print(f"ERROR: Invalid notebook file (not valid JSON): {notebook_path}")
+        return False
 
 
 def push_kernel(temp_dir, is_new):
@@ -153,48 +75,6 @@ def push_kernel(temp_dir, is_new):
         sys.exit(1)
 
 
-def validate_notebook(notebook_path):
-    """
-    Validate that the notebook file exists and is a valid JSON file.
-
-    Args:
-        notebook_path: Path to the notebook file
-
-    Returns:
-        bool: True if valid, False otherwise
-    """
-    if not notebook_path.exists():
-        print(f"ERROR: Notebook file not found: {notebook_path}")
-        return False
-
-    if not notebook_path.suffix == ".ipynb":
-        print(f"ERROR: File must have .ipynb extension: {notebook_path}")
-        return False
-
-    try:
-        with open(notebook_path, "r") as f:
-            json.load(f)
-        return True
-    except json.JSONDecodeError:
-        print(f"ERROR: Invalid notebook file (not valid JSON): {notebook_path}")
-        return False
-
-
-def parse_sources(sources_str):
-    """
-    Parse comma-separated sources string into a list.
-
-    Args:
-        sources_str: Comma-separated string of sources
-
-    Returns:
-        list: List of sources, or empty list if None
-    """
-    if not sources_str:
-        return []
-    return [s.strip() for s in sources_str.split(",") if s.strip()]
-
-
 def main():
     parser = argparse.ArgumentParser(
         description="Push a Jupyter notebook to Kaggle as a kernel",
@@ -202,20 +82,20 @@ def main():
         epilog="""
 Examples:
   # Basic usage (create or update kernel)
-  python push_kernel.py --notebook my_analysis.ipynb --title "My Analysis"
+  python upload_notebook_to_kaggle.py --notebook my_analysis.ipynb --title "My Analysis"
 
   # With dataset sources
-  python push_kernel.py -n analysis.ipynb -t "Analysis" -d "username/dataset1,username/dataset2"
+  python upload_notebook_to_kaggle.py -n analysis.ipynb -t "Analysis" -d "username/dataset1,username/dataset2"
 
   # With competition source
-  python push_kernel.py -n submission.ipynb -t "My Submission" -c "titanic"
+  python upload_notebook_to_kaggle.py -n submission.ipynb -t "My Submission" -c "titanic"
 
   # With both datasets and competition
-  python push_kernel.py -n kernel.ipynb -t "Full Analysis" \\
+  python upload_notebook_to_kaggle.py -n kernel.ipynb -t "Full Analysis" \\
     -d "username/dataset1,username/dataset2" -c "house-prices-advanced-regression-techniques"
 
   # Custom slug
-  python push_kernel.py -n notebook.ipynb -t "My Kernel" -s "custom-kernel-slug"
+  python upload_notebook_to_kaggle.py -n notebook.ipynb -t "My Kernel" -s "custom-kernel-slug"
 
 Note:
   - Dataset sources format: 'username/dataset-name'

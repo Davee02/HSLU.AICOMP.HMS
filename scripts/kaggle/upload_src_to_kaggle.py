@@ -4,12 +4,18 @@ Creates a new dataset if it doesn't exist, or updates it with a new version if i
 """
 
 import argparse
-import json
 import shutil
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
+
+from kaggle_utils import (
+    create_dataset,
+    create_dataset_metadata,
+    dataset_exists,
+    update_dataset,
+    validate_dataset_id,
+)
 
 
 def create_placeholder_in_src(temp_src_path):
@@ -22,95 +28,6 @@ def create_placeholder_in_src(temp_src_path):
     placeholder_path = temp_src_path / ".gitkeep"
     placeholder_path.write_text("# This file ensures the src/ directory structure is preserved\n")
     print(f"Created placeholder file: {placeholder_path}")
-
-
-def create_dataset_metadata(dataset_title, dataset_id, temp_dir):
-    """
-    Create the dataset-metadata.json file required by Kaggle.
-
-    Args:
-        dataset_title: Title of the dataset
-        dataset_id: Dataset ID in format 'username/dataset-name'
-        temp_dir: Temporary directory where metadata will be created
-    """
-    metadata = {"title": dataset_title, "id": dataset_id, "licenses": [{"name": "CC0-1.0"}]}
-
-    metadata_path = Path(temp_dir) / "dataset-metadata.json"
-    with open(metadata_path, "w") as f:
-        json.dump(metadata, f, indent=2)
-
-    print(f"Created metadata file: {metadata_path}")
-    return metadata_path
-
-
-def dataset_exists(dataset_id):
-    """
-    Check if a dataset already exists on Kaggle.
-
-    Args:
-        dataset_id: Dataset ID in format 'username/dataset-name'
-
-    Returns:
-        bool: True if dataset exists, False otherwise
-    """
-    try:
-        result = subprocess.run(
-            ["kaggle", "datasets", "status", dataset_id], capture_output=True, text=True, check=False
-        )
-        return result.returncode == 0
-    except Exception as e:
-        print(f"Error checking dataset existence: {e}")
-        return False
-
-
-def create_dataset(temp_dir, dataset_id):
-    """
-    Create a new dataset on Kaggle.
-
-    Args:
-        temp_dir: Directory containing the dataset files and metadata
-        dataset_id: Dataset ID in format 'username/dataset-name'
-    """
-    print(f"\nCreating new dataset: {dataset_id}")
-    try:
-        result = subprocess.run(
-            ["kaggle", "datasets", "create", "-p", temp_dir, "-r", "tar", "-t"],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        print(result.stdout)
-        print("Dataset created successfully!")
-    except subprocess.CalledProcessError as e:
-        print("ERROR: Failed to create dataset")
-        print(f"stdout: {e.stdout}")
-        print(f"stderr: {e.stderr}")
-        sys.exit(1)
-
-
-def update_dataset(temp_dir, dataset_id):
-    """
-    Update an existing dataset on Kaggle (create a new version).
-
-    Args:
-        temp_dir: Directory containing the dataset files and metadata
-        dataset_id: Dataset ID in format 'username/dataset-name'
-    """
-    print(f"\nUpdating existing dataset: {dataset_id}")
-    try:
-        result = subprocess.run(
-            ["kaggle", "datasets", "version", "-p", temp_dir, "-m", "Updated via upload script", "-r", "tar", "-t"],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        print(result.stdout)
-        print("Dataset updated successfully!")
-    except subprocess.CalledProcessError as e:
-        print("ERROR: Failed to update dataset")
-        print(f"stdout: {e.stdout}")
-        print(f"stderr: {e.stderr}")
-        sys.exit(1)
 
 
 def copy_src_to_temp(src_path, temp_dir):
@@ -146,8 +63,8 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python upload_to_kaggle.py --title "My Project Source" --id "username/my-project-src"
-  python upload_to_kaggle.py -t "ML Pipeline" -i "username/ml-pipeline-code"
+  python upload_src_to_kaggle.py --title "My Project Source" --id "username/my-project-src"
+  python upload_src_to_kaggle.py -t "ML Pipeline" -i "username/ml-pipeline-code"
         """,
     )
 
@@ -160,8 +77,7 @@ Examples:
     args = parser.parse_args()
 
     # Validate dataset ID format
-    if "/" not in args.id:
-        print("ERROR: Dataset ID must be in format 'username/dataset-name'")
+    if not validate_dataset_id(args.id):
         sys.exit(1)
 
     # Get the src/ path
