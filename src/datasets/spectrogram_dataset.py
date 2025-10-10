@@ -60,7 +60,7 @@ class SpectrogramDataset(Dataset):
         spectrogram_tensor = torch.tensor(spectrogram, dtype=torch.float32)
 
         if self.mode == "train":
-            labels = torch.tensor(row[self.targets], dtype=torch.float32)
+            labels = torch.tensor(row.loc[self.targets].values.astype(np.float32))
             return spectrogram_tensor, labels
         else:
             return spectrogram_tensor
