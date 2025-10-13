@@ -1,0 +1,198 @@
+[
+  {
+    "identifier": "uniform_baseline",
+    "description": "Baseline that assigns uniform probabilities (1/6) to each class",
+    "date": "01.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/baselines/baselines.ipynb",
+    "git_commit_sha": "c9230c2aeae36e5f7f528efdcc5e1e341b38be65",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 1.457954,
+      "kaggle_private": 1.138332,
+      "kaggle_public": 1.091899
+    }
+  },
+  {
+    "identifier": "uniform_baseline",
+    "description": "Baseline that assigns uniform probabilities (1/6) to each class",
+    "date": "01.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/baselines/baselines.ipynb",
+    "git_commit_sha": "c9230c2aeae36e5f7f528efdcc5e1e341b38be65",
+    "data_preparation_vote_method": "sum_and_normalize",
+    "scores": {
+      "cv": 1.456325,
+      "kaggle_private": 1.138332,
+      "kaggle_public": 1.091899
+    }
+  },
+  {
+    "identifier": "mean_baseline",
+    "description": "Baseline that predicts the mean class distribution from the training set",
+    "date": "01.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/baselines/baselines.ipynb",
+    "git_commit_sha": "c9230c2aeae36e5f7f528efdcc5e1e341b38be65",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 1.253611,
+      "kaggle_private": 0.984264,
+      "kaggle_public": 0.969681
+    }
+  },
+  {
+    "identifier": "mean_baseline",
+    "description": "Baseline that predicts the mean class distribution from the training set",
+    "date": "01.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/baselines/baselines.ipynb",
+    "git_commit_sha": "c9230c2aeae36e5f7f528efdcc5e1e341b38be65",
+    "data_preparation_vote_method": "sum_and_normalize",
+    "scores": {
+      "cv": 1.255924,
+      "kaggle_private": 0.989084,
+      "kaggle_public": 0.975147
+    }
+  },
+  {
+    "identifier": "xgboost_mean",
+    "description": "XGBoost model trained with mean over time for all 400 spectrogram frequencies",
+    "date": "06.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost.ipynb",
+    "git_commit_sha": "86434374824e37fe4bb0e2d7ccd0609f80758125",
+    "data_preparation_vote_method": "sum_and_normalize",
+    "scores": {
+      "cv": 1.05587,
+      "kaggle_private": 0.901332,
+      "kaggle_public": 0.829292
+    }
+  },
+  {
+    "identifier": "xgboost_mean",
+    "description": "XGBoost model trained with mean over time for all 400 spectrogram frequencies",
+    "date": "06.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost.ipynb",
+    "git_commit_sha": "86434374824e37fe4bb0e2d7ccd0609f80758125",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 1.055870,
+      "kaggle_private": 0.882852,
+      "kaggle_public": 0.831707
+    }
+  },
+  {
+    "identifier": "xgboost_mean_min",
+    "description": "XGBoost model trained with mean and min over time for all 400 spectrogram frequencies",
+    "date": "10.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost.ipynb",
+    "git_commit_sha": "8d95a7e0a455cfac6d617144219d66937e34ab1b",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 1.017305,
+      "kaggle_private": 0.863346,
+      "kaggle_public": 0.766263
+    }
+  },
+  {
+    "identifier": "xgboost_mean_min",
+    "description": "XGBoost model trained with mean and min over time for all 400 spectrogram frequencies",
+    "date": "10.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost.ipynb",
+    "git_commit_sha": "8d95a7e0a455cfac6d617144219d66937e34ab1b",
+    "data_preparation_vote_method": "sum_and_normalize",
+    "scores": {
+      "cv": 1.012954,
+      "kaggle_private": 0.881959,
+      "kaggle_public": 0.777585
+    }
+  },
+  {
+    "identifier": "xgboost_mean_min_max",
+    "description": "XGBoost model trained with mean, min and max over time for all 400 spectrogram frequencies",
+    "date": "10.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost.ipynb",
+    "git_commit_sha": "bcc0b8232abfb248d26d3edb163b71583b9ec5b6",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 1.000208,
+      "kaggle_private": 0.856788,
+      "kaggle_public": 0.759568
+    }
+  },
+  {
+    "identifier": "xgboost_mean_min_max",
+    "description": "XGBoost model trained with mean, min and max over time for all 400 spectrogram frequencies",
+    "date": "10.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost.ipynb",
+    "git_commit_sha": "bcc0b8232abfb248d26d3edb163b71583b9ec5b6",
+    "data_preparation_vote_method": "sum_and_normalize",
+    "scores": {
+      "cv": 1.000278,
+      "kaggle_private": 0.867882,
+      "kaggle_public": 0.761161
+    }
+  },
+  {
+    "identifier": "svm_mean",
+    "description": "SVM model trained with mean over time for all 400 spectrogram frequencies",
+    "date": "10.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/svm/svm_baseline.ipynb",
+    "git_commit_sha": "898dd0cde88ba841f5ae7476a2791838c22bb157",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 1.260945,
+      "kaggle_private": 0.986732,
+      "kaggle_public": 0.978009
+    }
+  },
+  {
+    "identifier": "svm_mean",
+    "description": "SVM model trained with mean over time for all 400 spectrogram frequencies",
+    "date": "13.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/svm/svm_baseline.ipynb",
+    "git_commit_sha": "898dd0cde88ba841f5ae7476a2791838c22bb157",
+    "data_preparation_vote_method": "sum_and_normalize",
+    "scores": {
+      "cv": 1.269793,
+      "kaggle_private": 0.984078,
+      "kaggle_public": 0.992181
+    }
+  },
+  {
+    "identifier": "svm_crafted_features",
+    "description": "SVM model trained with hand-crafted features (regional band powers, power ratios, temporal variability, left-right differences)",
+    "date": "10.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/svm/svm_crafted_features.ipynb",
+    "git_commit_sha": "898dd0cde88ba841f5ae7476a2791838c22bb157",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 1.190405,
+      "kaggle_private": 0.918513,
+      "kaggle_public": 0.902276
+    }
+  },
+  {
+    "identifier": "svm_crafted_features",
+    "description": "SVM model trained with hand-crafted features (regional band powers, power ratios, temporal variability, left-right differences)",
+    "date": "13.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/svm/svm_crafted_features.ipynb",
+    "git_commit_sha": "898dd0cde88ba841f5ae7476a2791838c22bb157",
+    "data_preparation_vote_method": "sum_and_normalize",
+    "scores": {
+      "cv": 1.195205,
+      "kaggle_private": 0.925608,
+      "kaggle_public": 0.910366
+    }
+  }
+]
