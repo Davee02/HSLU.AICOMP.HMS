@@ -119,7 +119,7 @@ class EEGSpectrogramGenerator:
             n_fft=1024,  # controls vertical resolution and quality of spectrogram
             n_mels=self._result_dim[0],  # number of mel bands, corresponds to height of spectrogram
             fmin=self._frequency_range[0],  # min frequency
-            fmax=self._frequency_range[0],  # max frequency
+            fmax=self._frequency_range[1],  # max frequency
             win_length=self._result_dim[0],  # window size, controls horizontal resolution and quality of spectrogram
         )
 
