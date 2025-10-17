@@ -72,6 +72,16 @@ def get_library_root() -> Path:
     return Path(__file__).resolve().parent.parent.parent
 
 
+def fill_nan_with_mean(X: np.ndarray) -> np.ndarray:
+    if X.ndim == 1:
+        col_mean = np.nanmean(X)
+        X = np.nan_to_num(X, nan=col_mean)
+    else:
+        col_means = np.nanmean(X, axis=0)
+        X = np.nan_to_num(X, nan=col_means)
+    return X
+
+
 def walk_and_collect(base_path: str, extensions: Sequence[str]):
     if not isinstance(base_path, str) or not isinstance(extensions, Sequence):
         raise TypeError(
