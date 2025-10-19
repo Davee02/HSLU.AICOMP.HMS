@@ -46,6 +46,18 @@ def get_models_save_path(kaggle_hsm_models_dataset_id: str = "") -> Path:
         return get_library_root() / "models"
 
 
+def get_eeg_spectrogram_path(split: str, kaggle_eeg_spectrogram_dataset_id: str) -> Path:
+    if running_in_kaggle():
+        if split == "train":
+            # for train, load the preprocessed spectrograms from input dataset
+            return Path("/kaggle/input") / kaggle_eeg_spectrogram_dataset_id
+        else:
+            # if not, use temp path
+            return Path("/kaggle/temp/eeg_spectrograms") / split
+    else:
+        return get_processed_data_dir() / "eeg_spectrograms" / split
+
+
 def running_in_kaggle() -> bool:
     return bool(os.environ.get("KAGGLE_URL_BASE", ""))
 

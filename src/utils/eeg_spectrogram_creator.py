@@ -14,9 +14,8 @@ class EEGSpectrogramGenerator:
         """
         Args:
             spectrogram_types: List of spectrogram types to generate.
-                             Defaults to ["mel"] if not specified.
         """
-        self.chain_names = ["LL", "LP", "RP", "RR", "CZ"]
+        self.chain_names = ["LL", "LP", "RL", "RP", "CZ"]
         self.electrodes_per_chain = [
             ["Fp1", "F7", "T3", "T5", "O1"],
             ["Fp1", "F3", "C3", "P3", "O1"],
@@ -29,7 +28,7 @@ class EEGSpectrogramGenerator:
         self._frequency_range = (0, 25)  # Hz
 
         if spectrogram_types is None:
-            spectrogram_types = ["mel"]
+            raise ValueError("spectrogram_types must be provided as a list of strings")
 
         self._spectrogram_types = spectrogram_types
 
