@@ -201,12 +201,12 @@
     "date": "17.10.2025",
     "wandb_run": "",
     "notebook_path": "notebooks/models/xgboost/xgboost_eeg_spectrograms.ipynb",
-    "git_commit_sha": "",
+    "git_commit_sha": "8fc273cd1090690d325544077b36d349dd3a8ae2",
     "data_preparation_vote_method": "max_vote_window",
     "scores": {
       "cv": 0.91626,
-      "kaggle_private": null,
-      "kaggle_public": null
+      "kaggle_private": 0.768739,
+      "kaggle_public": 0.678444
     }
   },
   {
@@ -215,12 +215,12 @@
     "date": "17.10.2025",
     "wandb_run": "",
     "notebook_path": "notebooks/models/xgboost/xgboost_eeg_spectrograms.ipynb",
-    "git_commit_sha": "",
+    "git_commit_sha": "8fc273cd1090690d325544077b36d349dd3a8ae2",
     "data_preparation_vote_method": "max_vote_window",
     "scores": {
       "cv": 0.91626,
-      "kaggle_private": null,
-      "kaggle_public": null
+      "kaggle_private": 0.782686,
+      "kaggle_public": 0.692290
     }
   },
   {
@@ -229,12 +229,54 @@
     "date": "17.10.2025",
     "wandb_run": "",
     "notebook_path": "notebooks/models/xgboost/xgboost_eeg_spectrograms.ipynb",
-    "git_commit_sha": "",
+    "git_commit_sha": "8fc273cd1090690d325544077b36d349dd3a8ae2",
     "data_preparation_vote_method": "max_vote_window",
     "scores": {
       "cv": 0.89833,
-      "kaggle_private": null,
-      "kaggle_public": null
+      "kaggle_private": 0.752964,
+      "kaggle_public": 0.653264
+    }
+  },
+  {
+    "identifier": "xgboost_mean_min_max_spect_eeg_mel_central_chain",
+    "description": "XGBoost model trained with mean, min and max over time for all Kaggle and EEG Mel spectrogram features, including the central chain",
+    "date": "20.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost_eeg_spectrograms_with_central.ipynb",
+    "git_commit_sha": "ecf3c431f9d8763d5c1e480f59649bae5694f424",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.92555,
+      "kaggle_private": 0.779329,
+      "kaggle_public": 0.679358
+    }
+  },
+  {
+    "identifier": "xgboost_mean_min_max_spect_eeg_stft_central_chain",
+    "description": "XGBoost model trained with mean, min and max over time for all Kaggle and STFT Mel spectrogram features, including the central chain",
+    "date": "20.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost_eeg_spectrograms_with_central.ipynb",
+    "git_commit_sha": "ecf3c431f9d8763d5c1e480f59649bae5694f424",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.921589,
+      "kaggle_private": 0.774804,
+      "kaggle_public": 0.683493
+    }
+  },
+  {
+    "identifier": "xgboost_mean_min_max_spect_eeg_cwt_central_chain",
+    "description": "XGBoost model trained with mean, min and max over time for all Kaggle and CWT Mel spectrogram features, including the central chain",
+    "date": "20.10.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/xgboost/xgboost_eeg_spectrograms_with_central.ipynb",
+    "git_commit_sha": "ecf3c431f9d8763d5c1e480f59649bae5694f424",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.90433,
+      "kaggle_private": 0.767510,
+      "kaggle_public": 0.649839
     }
   }
 ]
