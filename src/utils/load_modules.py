@@ -11,4 +11,7 @@ def load_modules(module_files: Iterable[str], module_path: str = "{}"):
             # extract module name from file name and import it
             mod_name = os.path.basename(os.path.splitext(mod)[0])
             # import the module
-            importlib.import_module(name=module_path.format(mod_name))
+            try:
+                importlib.import_module(name=module_path.format(mod_name))
+            except ModuleNotFoundError as e:
+                print(f"Skipping module {mod_name} due to missing dependency: {e}")
