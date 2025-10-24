@@ -1,4 +1,4 @@
-# python scripts/03_test_model_gpu.py --batch_size 32 --input_height 256 --input_width 128 --model_names tf_efficientnet_b0_ns,tf_efficientnet_b1_ns,tf_efficientnet_b2_ns,tf_efficientnet_b3_ns,tf_efficientnet_b4_ns,resnet18,resnet34,resnet50,resnet101,inception_v3,inception_v4,densenet121,densenet169,densenet201,mobilenetv3_small_100,mobilenetv3_large_100
+# python scripts/03_test_model_gpu.py --batch_size 32 --input_height 256 --input_width 128 --model_names tf_efficientnet_b0_ns,tf_efficientnet_b1_ns,tf_efficientnet_b2_ns,tf_efficientnet_b3_ns,tf_efficientnet_b4_ns,resnet18,resnet34,resnet50,resnet101,inception_v3,inception_v4
 
 import argparse
 import os
