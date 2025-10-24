@@ -28,7 +28,7 @@ conda activate aicomp-hms
 pip install -r requirements.txt
 ```
 
-Then you need to download the dataset from Kaggle:
+Then you need to download the dataset from Kaggle (you need to be logged into your Kaggle account for this step; follow [these instructions](https://www.kaggle.com/docs/api#authentication) if you haven't set up the Kaggle API before):
 ```bash
 python scripts/01_download.py
 ```
