@@ -16,7 +16,8 @@ if __name__ == "__main__":
 
 download_path = args.target_dir if args.target_dir else Path(__file__).parent.parent / Path("data")
 if not download_path.exists():
-    raise ValueError(f"The target download directory {download_path} does not exist")
+    print("The target download directory {download_path} does not exist yet. Creating it now.")
+    download_path.mkdir(parents=True, exist_ok=True)
 
 kaggle.api.authenticate()
 
