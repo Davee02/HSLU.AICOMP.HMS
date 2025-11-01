@@ -15,7 +15,7 @@ if bool(os.environ.get("KAGGLE_URL_BASE", "")):
     # running on Kaggle
     sys.path.insert(0, "/kaggle/input/hsm-source-files")
 else:
-    # rnning locally
+    # running locally
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from src.datasets.eeg_processor import EEGDataProcessor

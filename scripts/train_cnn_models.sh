@@ -1,7 +1,7 @@
 #!/bin/bash
 
 models=(
-    # "tf_efficientnet_b0_ns"
+    "tf_efficientnet_b0_ns"
     "tf_efficientnet_b1_ns"
     "tf_efficientnet_b2_ns"
     "tf_efficientnet_b3_ns"
@@ -15,7 +15,7 @@ models=(
 
 for model in "${models[@]}"
 do
-    python 04_cnn_architecture_probing.py \
+    python 03_cnn_architecture_probing.py \
         --model_name "$model" \
         --epochs 5 \
         --batch_size 32 \
