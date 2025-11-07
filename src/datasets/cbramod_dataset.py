@@ -10,12 +10,13 @@ from src.utils.utils import fill_nan_with_mean
 
 
 class CBraModDataset(Dataset):
-    def __init__(self, df, data_path, window_size_seconds, eeg_frequency, mode):
+    def __init__(self, df, data_path, window_size_seconds, eeg_frequency, mode, normalization="naive"):
         self.df = df
         self.data_path = Path(data_path)
         self.window_size_seconds = window_size_seconds
         self.eeg_frequency = eeg_frequency
         self.mode = mode  # 'train' or 'test'
+        self.normalization = normalization
 
     def __len__(self):
         return len(self.df)
@@ -32,15 +33,28 @@ class CBraModDataset(Dataset):
 
         # take middle window
         rows = len(eeg_data)
-        middle_offset = (self.window_size_seconds // 2) * self.eeg_frequency
-        start_idx = (rows - middle_offset) // 2
-        eeg_data = eeg_data[start_idx : start_idx + middle_offset]
+        offset = (rows - self.window_size_seconds * self.eeg_frequency) // 2
+        eeg_data = eeg_data[offset : offset + self.window_size_seconds * self.eeg_frequency]
         eeg_data = fill_nan_with_mean(eeg_data)
 
-        # normalize to ~[-1, 1] by dividing by 100uV
-        eeg_data = eeg_data / 100.0
+        if self.normalization == "naive":
+            # normalize to ~[-1, 1] by dividing by 100uV
+            eeg_data = eeg_data / 100.0
+        else:
+            # z-score normalization to zero mean and unit variance
+            mean = np.mean(eeg_data, axis=0, keepdims=True)
+            std = np.std(eeg_data, axis=0, keepdims=True)
+            eeg_data = (eeg_data - mean) / (std + 1e-6)
 
         signals = torch.from_numpy(eeg_data.copy()).float()
+
+        assert signals.shape == (self.window_size_seconds * self.eeg_frequency, len(Constants.EEG_FEATURES))
+        signals = signals.transpose(0, 1)  # transpose from [time_steps, num_channels] to [num_channels, time_steps]
+        assert signals.shape == (len(Constants.EEG_FEATURES), self.window_size_seconds * self.eeg_frequency)
+        signals = signals.reshape(
+            signals.shape[0], self.window_size_seconds, self.eeg_frequency
+        )  # then reshape into [num_channels, seq_len, patch_size]
+        assert signals.shape == (len(Constants.EEG_FEATURES), self.window_size_seconds, self.eeg_frequency)
 
         if self.mode == "test":
             return signals

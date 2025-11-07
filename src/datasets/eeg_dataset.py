@@ -9,7 +9,7 @@ from src.utils.constants import Constants
 
 class EEGDataset(Dataset):
 
-    def __init__(self, df, data_path, mode="train", specs=None, eeg_specs=None, downsample_factor=1):
+    def __init__(self, df, data_path, mode="train", downsample_factor=1):
         self.df = df
         self.data_path = data_path
         self.mode = mode
