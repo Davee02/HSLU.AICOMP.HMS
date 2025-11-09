@@ -94,6 +94,10 @@ def fill_nan_with_mean(X: np.ndarray) -> np.ndarray:
     return X
 
 
+def fill_nan_with_zero(X: np.ndarray) -> np.ndarray:
+    return np.nan_to_num(X, nan=0.0)
+
+
 def walk_and_collect(base_path: str, extensions: Sequence[str]):
     if not isinstance(base_path, str) or not isinstance(extensions, Sequence):
         raise TypeError(
