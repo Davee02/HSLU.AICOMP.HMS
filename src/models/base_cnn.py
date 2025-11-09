@@ -4,7 +4,7 @@ import torch.nn as nn
 
 
 class BaseCNN(nn.Module):
-    def __init__(self, model_name, pretrained=True, in_channels=4, num_classes=6):
+    def __init__(self, model_name, pretrained=True, num_classes=6):
         super().__init__()
         self.model = timm.create_model(model_name, pretrained=pretrained, in_chans=3, num_classes=num_classes)
 
