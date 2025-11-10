@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import wandb
+from torch.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
@@ -84,6 +85,7 @@ def get_dataloaders(df, fold_id, cfg, targets):
 def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True, wandb_project=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
+    scaler = GradScaler(enabled=(device.type == "cuda"))
 
     all_oof_preds = []
     all_oof_labels = []
@@ -120,6 +122,8 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
                 config=config,
             )
 
+        torch.cuda.empty_cache()
+
         # init model
         model = BaseCNN(cfg.model_name, pretrained=True, num_classes=cfg.target_size)
         model.to(device)
@@ -144,11 +148,14 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
                 images, labels = images.to(device), labels.to(device)
 
                 optimizer.zero_grad()
-                outputs = model(images)
-                log_probs = F.log_softmax(outputs, dim=1)
-                loss = loss_fn(log_probs, labels)
-                loss.backward()
-                optimizer.step()
+                with autocast(device_type=device.type, dtype=torch.float16):
+                    outputs = model(images)
+                    log_probs = F.log_softmax(outputs, dim=1)
+                    loss = loss_fn(log_probs, labels)
+
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
 
                 train_loss += loss.item() * images.size(0)
 
@@ -163,9 +170,12 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
             with torch.no_grad():
                 for images, labels in tqdm(valid_loader, desc="Validation"):
                     images, labels = images.to(device), labels.to(device)
-                    outputs = model(images)
-                    log_probs = F.log_softmax(outputs, dim=1)
-                    loss = loss_fn(log_probs, labels)
+
+                    with autocast(device_type=device.type, dtype=torch.float16):
+                        outputs = model(images)
+                        log_probs = F.log_softmax(outputs, dim=1)
+                        loss = loss_fn(log_probs, labels)
+
                     valid_loss += loss.item() * images.size(0)
 
             valid_loss /= len(valid_loader.dataset)
