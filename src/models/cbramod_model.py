@@ -32,7 +32,8 @@ class CBraModModel(nn.Module):
             nhead=8,
         )
 
-        self.backbone.load_state_dict(torch.load(pretrained_weights_path, map_location=device))
+        if pretrained_weights_path is not None:
+            self.backbone.load_state_dict(torch.load(pretrained_weights_path, map_location=device))
 
         self.backbone.proj_out = nn.Identity()
 
