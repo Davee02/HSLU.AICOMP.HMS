@@ -278,5 +278,19 @@
       "kaggle_private": 0.767510,
       "kaggle_public": 0.649839
     }
+  },
+  {
+    "identifier": "cbramod_transformer",
+    "description": "Finetuned CBraMod transformer on raw EEG data with naive normalization",
+    "date": "13.11.2025",
+    "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cbramod",
+    "notebook_path": "notebooks/models/cbramod/cbramod_training.ipynb",
+    "git_commit_sha": "524a937df6e60fd6d862dc023341b112b02b95b2",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 1.02629,
+      "kaggle_private": 0.862492,
+      "kaggle_public": 0.758051
+    }
   }
 ]
