@@ -7,13 +7,14 @@ from torch.utils.data import Dataset
 
 
 class MultiSpectrogramDataset(Dataset):
-    def __init__(self, df, targets, data_path, img_size, eeg_spec_path, mode="train"):
+    def __init__(self, df, targets, data_path, img_size, eeg_spec_path, mode="train", apply_augmentations=True):
         self.df = df
         self.targets = targets
         self.data_path = data_path
         self.img_size = img_size
         self.eeg_spec_path = eeg_spec_path
         self.mode = mode
+        self.apply_augmentations = apply_augmentations
 
     def __len__(self):
         return len(self.df)
@@ -29,6 +30,8 @@ class MultiSpectrogramDataset(Dataset):
         spectrogram_tensor = torch.cat([kaggle_spec_tensor, eeg_spec_tensor], dim=0)
 
         if self.mode == "train":
+            if self.apply_augmentations:
+                spectrogram_tensor = self._augment(spectrogram_tensor)
             labels = torch.tensor(row.loc[self.targets].values.astype(np.float32))
             return spectrogram_tensor, labels
         else:
@@ -94,3 +97,27 @@ class MultiSpectrogramDataset(Dataset):
         img = (img - m) / (s + ep)
 
         return torch.tensor(img, dtype=torch.float32)
+
+    def _augment(self, tensor):
+        # Gaussian noise
+        if np.random.rand() < 0.3:
+            noise = torch.randn_like(tensor) * 0.05
+            tensor = tensor + noise
+
+        # Horizontal flip (time reversal)
+        if np.random.rand() < 0.5:
+            tensor = torch.flip(tensor, dims=[2])
+
+        # Time masking (p=0.5)
+        if np.random.rand() < 0.5:
+            time_mask_width = np.random.randint(10, 30)
+            time_mask_start = np.random.randint(0, max(1, tensor.shape[2] - time_mask_width))
+            tensor[:, :, time_mask_start : time_mask_start + time_mask_width] = 0
+
+        # Frequency masking (p=0.5)
+        if np.random.rand() < 0.5:
+            freq_mask_height = np.random.randint(5, 15)
+            freq_mask_start = np.random.randint(0, max(1, tensor.shape[1] - freq_mask_height))
+            tensor[:, freq_mask_start : freq_mask_start + freq_mask_height, :] = 0
+
+        return tensor
