@@ -12,7 +12,6 @@ class BaseCNN(nn.Module):
             in_chans=3,
             num_classes=num_classes,
             drop_rate=dropout_p,
-            drop_path_rate=dropout_p,
         )
 
     def forward(self, x):
