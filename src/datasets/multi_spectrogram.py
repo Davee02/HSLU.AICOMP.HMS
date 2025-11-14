@@ -22,9 +22,10 @@ class MultiSpectrogramDataset(Dataset):
         row = self.df.iloc[idx]
 
         kaggle_spec_tensor = self._load_kaggle_spectrogram(row)
-
         eeg_spec_tensor = self._load_eeg_spectrogram(row)
 
+        # Concatenate both spectrograms along the channel dimension (dim=0)
+        # This combines the 4 Kaggle channels with the 4 EEG channels into a single tensor of shape (8, height, width)
         spectrogram_tensor = torch.cat([kaggle_spec_tensor, eeg_spec_tensor], dim=0)
 
         if self.mode == "train":
@@ -39,40 +40,56 @@ class MultiSpectrogramDataset(Dataset):
         spec_df = pd.read_parquet(spec_path)
 
         processed_channels = []
+        # Process 4 separate channels from the spectrogram
         for k in range(4):
+            # Extract columns for this channel (100 columns per channel)
+            # Column 0 is the time index, so we start from column 1
             start_col = k * 100 + 1
             end_col = (k + 1) * 100 + 1
+            # Transpose to get (frequency, time) shape
             img = spec_df.iloc[:, start_col:end_col].values.T
+
+            # Clip values to range [exp(-4), exp(8)] to remove outliers
             img = np.clip(img, np.exp(-4), np.exp(8))
+            # Apply log transform to compress dynamic range
             img = np.log(img)
 
-            ep = 1e-6
+            # Standardize the data: subtract mean and divide by standard deviation
+            ep = 1e-6  # Small epsilon to prevent division by zero
             m, s = np.nanmean(img.flatten()), np.nanstd(img.flatten())
             img = (img - m) / (s + ep)
+            # Replace any NaN values with 0
             img = np.nan_to_num(img, nan=0.0)
 
+            # Center crop along the time dimension (take the middle part)
             time_dim = img.shape[1]
             crop_start = max(0, (time_dim - self.img_size[1]) // 2)
             img_cropped = img[:, crop_start : crop_start + self.img_size[1]]
 
+            # Pad the frequency dimension to match target size
+            # Creates a zero-filled array of target size
             padded_img = np.zeros(self.img_size, dtype=np.float32)
+            # Center the cropped image within the padded array
             pad_start = max(0, (self.img_size[0] - img_cropped.shape[0]) // 2)
             padded_img[pad_start : pad_start + img_cropped.shape[0], :] = img_cropped
             processed_channels.append(padded_img)
 
+        # Stack all 4 channels along axis 0 to create shape (4, height, width)
         return torch.tensor(np.stack(processed_channels, axis=0), dtype=torch.float32)
 
     def _load_eeg_spectrogram(self, row):
         eeg_id = row["eeg_id"]
         eeg_spec_path = os.path.join(self.eeg_spec_path, f"{eeg_id}.npy")
-
         img = np.load(eeg_spec_path)
 
+        # Remove the last channel (central chain electrodes)
         img = img[:, :, :-1]
 
+        # Transpose to have channels first: (channels, height, width)
         img = np.transpose(img, (2, 0, 1))
 
-        ep = 1e-6
+        # Standardize the EEG data across all dimensions
+        ep = 1e-6  # Small epsilon to prevent division by zero
         m, s = np.mean(img.flatten()), np.std(img.flatten())
         img = (img - m) / (s + ep)
 
