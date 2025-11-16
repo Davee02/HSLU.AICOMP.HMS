@@ -7,7 +7,16 @@ from torch.utils.data import Dataset
 
 
 class MultiSpectrogramDataset(Dataset):
-    def __init__(self, df, targets, data_path, img_size, eeg_spec_path, mode="train", apply_augmentations=True):
+    def __init__(
+        self,
+        df,
+        targets,
+        data_path,
+        img_size,
+        eeg_spec_path,
+        mode="train",
+        apply_augmentations=["gaussian_noise", "time_reversal", "time_masking", "frequency_masking"],
+    ):
         self.df = df
         self.targets = targets
         self.data_path = data_path
@@ -99,25 +108,28 @@ class MultiSpectrogramDataset(Dataset):
         return torch.tensor(img, dtype=torch.float32)
 
     def _augment(self, tensor):
-        # Gaussian noise
-        if np.random.rand() < 0.3:
-            noise = torch.randn_like(tensor) * 0.05
-            tensor = tensor + noise
+        if "gaussian_noise" in self.apply_augmentations:
+            if np.random.rand() < 0.3:
+                noise = torch.randn_like(tensor) * 0.05
+                tensor = tensor + noise
 
-        # Horizontal flip (time reversal)
-        if np.random.rand() < 0.5:
-            tensor = torch.flip(tensor, dims=[2])
+        if "time_reversal" in self.apply_augmentations:
+            # Horizontal flip (time reversal)
+            if np.random.rand() < 0.5:
+                tensor = torch.flip(tensor, dims=[2])
 
-        # Time masking (p=0.5)
-        if np.random.rand() < 0.5:
-            time_mask_width = np.random.randint(10, 30)
-            time_mask_start = np.random.randint(0, max(1, tensor.shape[2] - time_mask_width))
-            tensor[:, :, time_mask_start : time_mask_start + time_mask_width] = 0
+        if "time_masking" in self.apply_augmentations:
+            # Time masking (p=0.5)
+            if np.random.rand() < 0.5:
+                time_mask_width = np.random.randint(10, 30)
+                time_mask_start = np.random.randint(0, max(1, tensor.shape[2] - time_mask_width))
+                tensor[:, :, time_mask_start : time_mask_start + time_mask_width] = 0
 
-        # Frequency masking (p=0.5)
-        if np.random.rand() < 0.5:
-            freq_mask_height = np.random.randint(5, 15)
-            freq_mask_start = np.random.randint(0, max(1, tensor.shape[1] - freq_mask_height))
-            tensor[:, freq_mask_start : freq_mask_start + freq_mask_height, :] = 0
+        if "frequency_masking" in self.apply_augmentations:
+            # Frequency masking (p=0.5)
+            if np.random.rand() < 0.5:
+                freq_mask_height = np.random.randint(5, 15)
+                freq_mask_start = np.random.randint(0, max(1, tensor.shape[1] - freq_mask_height))
+                tensor[:, freq_mask_start : freq_mask_start + freq_mask_height, :] = 0
 
         return tensor
