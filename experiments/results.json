@@ -294,8 +294,8 @@
     }
   },
   {
-    "identifier": "multu_spect_cnn_inceptionv3_augmentations",
-    "description": "CNN with Inception v3 backbone trained on Kaggle an EEG spectrogram with data augmentations",
+    "identifier": "multi_spect_cnn_inceptionv3_no_augmentations",
+    "description": "CNN with Inception v3 backbone trained on Kaggle an EEG spectrogram without data augmentations",
     "date": "14.11.2025",
     "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
     "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
@@ -308,8 +308,64 @@
     }
   },
   {
-    "identifier": "multu_spect_cnn_inceptionv3_augmentations",
-    "description": "CNN with Inception v3 backbone trained on Kaggle an EEG spectrograms with data augmentations",
+    "identifier": "multi_spect_cnn_inceptionv3_time_reversal_augmentation",
+    "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms with the following data augmentation: time reversal",
+    "date": "18.11.2025",
+    "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
+    "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
+    "git_commit_sha": "1cc870ec379bdcb9f6808fa8019c7cacaab90b41",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.63734,
+      "kaggle_private": 0.545813,
+      "kaggle_public": 0.467420
+    }
+  },
+  {
+    "identifier": "multi_spect_cnn_inceptionv3_gaussian_noise_augmentation",
+    "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms with the following data augmentation: gaussian noise",
+    "date": "18.11.2025",
+    "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
+    "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
+    "git_commit_sha": "1cc870ec379bdcb9f6808fa8019c7cacaab90b41",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.67994,
+      "kaggle_private": 0.551032,
+      "kaggle_public": 0.452406
+    }
+  },
+  {
+    "identifier": "multi_spect_cnn_inceptionv3_time_masking_augmentation",
+    "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms with the following data augmentation: time_masking",
+    "date": "18.11.2025",
+    "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
+    "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
+    "git_commit_sha": "1cc870ec379bdcb9f6808fa8019c7cacaab90b41",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.67806,
+      "kaggle_private": 0.546172,
+      "kaggle_public": 0.466906
+    }
+  },
+  {
+    "identifier": "multi_spect_cnn_inceptionv3_frequency_masking_augmentation",
+    "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms with the following data augmentation: frequency_masking",
+    "date": "19.11.2025",
+    "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
+    "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
+    "git_commit_sha": "1cc870ec379bdcb9f6808fa8019c7cacaab90b41",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": ,
+      "kaggle_private": ,
+      "kaggle_public":
+    }
+  },
+  {
+    "identifier": "multi_spect_cnn_inceptionv3_all_augmentations",
+    "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms with all data augmentations",
     "date": "15.11.2025",
     "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
     "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
@@ -319,6 +375,34 @@
       "cv": 0.64221,
       "kaggle_private": 0.529249,
       "kaggle_public": 0.453643
+    }
+  },
+  {
+    "identifier": "multi_spect_cnn_inceptionv3_augmentations_10_epochs",
+    "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms with data augmentations with 10 epochs",
+    "date": "16.11.2025",
+    "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
+    "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
+    "git_commit_sha": "c72c9c2a49df048981215571d4dc2859a8f3a7a9",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.67350,
+      "kaggle_private": 0.549249,
+      "kaggle_public": 0.483643
+    }
+  },
+  {
+    "identifier": "multi_spect_cnn_inceptionv3_augmentations_paired_alignment",
+    "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms without data augmentations and paired image alignment with 5 epochs",
+    "date": "17.11.2025",
+    "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
+    "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
+    "git_commit_sha": "1cc870ec379bdcb9f6808fa8019c7cacaab90b41",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.68402,
+      "kaggle_private": 0.554644,
+      "kaggle_public": 0.460896
     }
   }
 ]
