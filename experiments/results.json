@@ -358,9 +358,9 @@
     "git_commit_sha": "1cc870ec379bdcb9f6808fa8019c7cacaab90b41",
     "data_preparation_vote_method": "max_vote_window",
     "scores": {
-      "cv": ,
-      "kaggle_private": ,
-      "kaggle_public":
+      "cv": 0.67806,
+      "kaggle_private": 0.525645,
+      "kaggle_public": 0.459908
     }
   },
   {
