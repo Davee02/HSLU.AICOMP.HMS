@@ -20,8 +20,6 @@ class EEGDatasetMontage(Dataset):
         df,
         data_path,
         mode="train",
-        specs=None,
-        eeg_specs=None,
         downsample_factor=1,
         augmentations=None,
     ):
@@ -69,9 +67,6 @@ class EEGDatasetMontage(Dataset):
 
         self.channel_indices = {name: i for i, name in enumerate(Constants.EEG_FEATURES)}
         self.new_feature_names = list(self.MONTAGES.keys()) + self.EKG_LEAD
-
-        self.specs = specs
-        self.eeg_specs = eeg_specs
 
     def __len__(self):
         return len(self.df)
