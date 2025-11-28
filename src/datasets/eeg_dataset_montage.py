@@ -23,7 +23,7 @@ class EEGDatasetMontage(Dataset):
         specs=None,
         eeg_specs=None,
         downsample_factor=1,
-        augmentations=None,  # <--- NEW PARAMETER
+        augmentations=None,
     ):
         self.df = df
         self.data_path = data_path
