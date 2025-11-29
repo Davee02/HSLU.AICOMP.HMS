@@ -392,6 +392,20 @@
     }
   },
   {
+    "identifier": "multi_spect_cnn_inceptionv3_mixup_alpha_0.5_dropout_0.2",
+    "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms with the following data augmentation: MixUp (alpha=0.5). Dropout p=0.2",
+    "date": "28.11.2025",
+    "wandb_run": "https://wandb.ai/hms-hslu-aicomp-hs25/hms-aicomp-cnn-multispec",
+    "notebook_path": "notebooks/models/CNN/multi_spect_cnn_training.ipynb",
+    "git_commit_sha": "4b25ccedc4e8c49e841d600e4802ce2ff9cf1be0",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.64054,
+      "kaggle_private": 0.513189,
+      "kaggle_public": 0.460271
+    }
+  },
+  {
     "identifier": "multi_spect_cnn_inceptionv3_mixup_alpha_1",
     "description": "CNN with Inception v3 backbone trained on Kaggle and EEG spectrograms with the following data augmentation: MixUp (alpha=1)",
     "date": "22.11.2025",
@@ -445,6 +459,20 @@
       "cv": 0.68402,
       "kaggle_private": 0.554644,
       "kaggle_public": 0.460896
+    }
+  },
+  {
+    "identifier": "mean_ensemble_multi_spect_cnn_conv_gru",
+    "description": "Mean Ensemble with the best Multi-Spectrogram CNN and Conv-GRU models",
+    "date": "29.11.2025",
+    "wandb_run": "",
+    "notebook_path": "notebooks/models/ensemble/mean_ensemble.ipynb",
+    "git_commit_sha": "4b25ccedc4e8c49e841d600e4802ce2ff9cf1be0",
+    "data_preparation_vote_method": "max_vote_window",
+    "scores": {
+      "cv": 0.55128,
+      "kaggle_private": 0.443124,
+      "kaggle_public": 0.367820
     }
   }
 ]
