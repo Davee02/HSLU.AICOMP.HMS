@@ -118,7 +118,6 @@ class EEGDataProcessor:
         max_vote_df[Constants.TARGETS] = vote_values / (vote_values.sum(axis=1, keepdims=True) + 1e-9)
         return max_vote_df.drop(
             columns=[
-                # "total_votes",
                 "eeg_sub_id",
                 "eeg_label_offset_seconds",
                 "spectrogram_sub_id",
