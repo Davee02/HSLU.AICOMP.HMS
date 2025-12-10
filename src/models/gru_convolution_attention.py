@@ -91,11 +91,6 @@ class NodeAttentionModel(nn.Module):
             in_channels = channels[i]
             out_channels = channels[i + 1]
 
-            # Block 0: Stride 2 (Total 8x)
-            # Block 1: Stride 2 (Total 16x)
-            # Block 2: Stride 2 (Total 32x) -> Sequence length ~312
-            # Block 3: Stride 1 (Keep resolution)
-
             if i < 3:
                 current_stride = 2
             else:
