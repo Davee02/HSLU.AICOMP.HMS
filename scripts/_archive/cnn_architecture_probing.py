@@ -7,9 +7,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import wandb
+from torch.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
-from tqdm.auto import tqdm
+from tqdm import tqdm
 
 if bool(os.environ.get("KAGGLE_URL_BASE", "")):
     # running on Kaggle
@@ -19,7 +20,7 @@ else:
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from src.datasets.eeg_processor import EEGDataProcessor
-from src.datasets.spectrogram_dataset import SpectrogramDataset
+from src.datasets.multi_spectrogram import MultiSpectrogramDataset
 from src.models.base_cnn import BaseCNN
 from src.utils.constants import Constants
 from src.utils.k_folds_creator import KFoldCreator
@@ -36,6 +37,7 @@ class CFG:
         self.seed = args.seed
         self.n_splits = 5
         self.data_path = get_raw_data_dir()
+        self.train_eeg_spec_path = get_processed_data_dir() / "eeg_spectrograms" / "train" / "cwt"
 
         self.model_name = args.model_name
         self.target_size = 6
@@ -53,8 +55,12 @@ def get_dataloaders(df, fold_id, cfg, targets):
     train_df = df[df["fold"] != fold_id].reset_index(drop=True)
     valid_df = df[df["fold"] == fold_id].reset_index(drop=True)
 
-    train_dataset = SpectrogramDataset(train_df, targets, cfg.data_path, cfg.img_size, mode="train")
-    valid_dataset = SpectrogramDataset(valid_df, targets, cfg.data_path, cfg.img_size, mode="train")
+    train_dataset = MultiSpectrogramDataset(
+        train_df, targets, cfg.data_path, cfg.img_size, cfg.train_eeg_spec_path, mode="train"
+    )
+    valid_dataset = MultiSpectrogramDataset(
+        valid_df, targets, cfg.data_path, cfg.img_size, cfg.train_eeg_spec_path, mode="train"
+    )
 
     train_loader = DataLoader(
         train_dataset,
@@ -79,6 +85,7 @@ def get_dataloaders(df, fold_id, cfg, targets):
 def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True, wandb_project=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
+    scaler = GradScaler(enabled=(device.type == "cuda"))
 
     all_oof_preds = []
     all_oof_labels = []
@@ -96,7 +103,7 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
                 "pretrained": True,
                 # Data
                 "fold": fold,
-                "features": "spectrograms",
+                "features": "multi_spectrograms",
                 "window_selection": data_preparation_vote_method,
                 "img_size": cfg.img_size,
                 # Training
@@ -109,11 +116,13 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
             }
 
             wandb.init(
-                project=wandb_project or "hms-aicomp",
-                name=f"{cfg.model_name}-spec-fold{fold}",
+                project=wandb_project or "hms-aicomp-cnn-multispec",
+                name=f"{cfg.model_name}-multispec-fold{fold}",
                 tags=[f"fold{fold}", cfg.model_name],
                 config=config,
             )
+
+        torch.cuda.empty_cache()
 
         # init model
         model = BaseCNN(cfg.model_name, pretrained=True, num_classes=cfg.target_size)
@@ -139,11 +148,14 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
                 images, labels = images.to(device), labels.to(device)
 
                 optimizer.zero_grad()
-                outputs = model(images)
-                log_probs = F.log_softmax(outputs, dim=1)
-                loss = loss_fn(log_probs, labels)
-                loss.backward()
-                optimizer.step()
+                with autocast(device_type=device.type, dtype=torch.float16):
+                    outputs = model(images)
+                    log_probs = F.log_softmax(outputs, dim=1)
+                    loss = loss_fn(log_probs, labels)
+
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
 
                 train_loss += loss.item() * images.size(0)
 
@@ -158,9 +170,12 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
             with torch.no_grad():
                 for images, labels in tqdm(valid_loader, desc="Validation"):
                     images, labels = images.to(device), labels.to(device)
-                    outputs = model(images)
-                    log_probs = F.log_softmax(outputs, dim=1)
-                    loss = loss_fn(log_probs, labels)
+
+                    with autocast(device_type=device.type, dtype=torch.float16):
+                        outputs = model(images)
+                        log_probs = F.log_softmax(outputs, dim=1)
+                        loss = loss_fn(log_probs, labels)
+
                     valid_loss += loss.item() * images.size(0)
 
             valid_loss /= len(valid_loader.dataset)
@@ -184,7 +199,7 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
                 best_val_loss = valid_loss
                 best_model_path = (
                     get_models_save_path()
-                    / "base_cnn"
+                    / "multi_spec_cnn"
                     / cfg.model_name
                     / data_preparation_vote_method
                     / f"best_model_fold{fold}.pth"
@@ -259,7 +274,7 @@ def run_training(df, data_preparation_vote_method, cfg, targets, use_wandb=True,
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train CNN on Kaggle spectrograms")
+    parser = argparse.ArgumentParser(description="Train CNN on Kaggle + EEG spectrograms")
 
     # Model parameters
     parser.add_argument(

@@ -9,14 +9,16 @@ This repository contains the code for the AI/ML competition (AICOMP) module at H
 
 ## Repository Structure
 
-- `experiments`: Contains the results of various experiments, both local and on Kaggle.
-- `data`: Contains the raw dataset downloaded from Kaggle and any processed data. The folder is .gitignored, but will be created when you run the data download and (pre)processing scripts.
-- `notebooks`: Contains Jupyter notebooks for exploratory data analysis, model development, and visualization.
-- `scripts`: Contains scripts for downloading the dataset, preprocessing data, training models, etc.
-  - `scripts/kaggle`: Contains scripts to make the workflow with Kaggle easier. For more details, see the [README](scripts/kaggle/readme.md) in that folder.
-- `src`: Contains the source code for the project, including custom datasets, models, trainers, and utility functions.
+- `data/`: Contains the raw dataset downloaded from Kaggle and any processed data. The folder is .gitignored, but will be created when you run the data download and (pre)processing scripts.
+- `notebooks/`: Contains Jupyter notebooks for exploratory data analysis, model development, visualization, and experiments.
+  - `notebooks/models/`: Contains notebooks specifically related to model training and evaluation.
+  - `notebooks/_archive/`: Contains older notebooks that are no longer actively used but are kept for reference.
+- `scripts/`: Contains scripts for downloading the dataset, preprocessing data, training models, etc.
+  - `scripts/kaggle/`: Contains scripts to make the workflow with Kaggle easier. They are not necessary to run the main codebase. For more details, see the [README](scripts/kaggle/readme.md) in that folder.
+  - `scripts/_archive/`: Contains older scripts that are no longer actively used but are kept for reference.
+- `src/`: Contains the source code for the project, including custom datasets, models, trainers, and utility functions.
 
-## Setup
+## Reproduction Instructions
 
 First, ensure you have Python installed.
 We recommend using [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) to manage your Python environment.
@@ -37,12 +39,14 @@ Then you need to download the dataset from Kaggle (you need to be logged into yo
 python scripts/01_download.py
 ```
 
-After downloading the data, you can preprocess the EEG data by running the following two scripts (caution: the second script can take several hours):
+After downloading the data, you can preprocess the EEG data by running the following two scripts (caution: the second script takes multiple hours to complete):
 
 ```bash
 python scripts/02_preprocess_eeg_data.py
-python scripts/03_create_eeg_spectrograms.py --spectrogram_types cwt
+python scripts/03_create_eeg_spectrograms.py --spectrogram_types cwt,stft,mel
 ```
+
+## Contributing
 
 If you want to contribute to the codebase, please install the pre-commit hooks by running:
 

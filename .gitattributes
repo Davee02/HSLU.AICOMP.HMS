@@ -1,3 +1,0 @@
-# Add files to .git LFS with `git track <filename>`or by adding it in here like so:
-# <directory_name>/* filter=lfs diff=lfs merge=lfs -text
-# <filename> filter=lfs diff=lfs merge=lfs -text

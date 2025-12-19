@@ -1,7 +1,7 @@
 [project]
 name = "HMS - Harmful Brain Activity Classification"
 description = "Project for the AICOMP module running in HS25 at HSLU"
-version = "0.1.0"
+version = "1.0.0"
 authors = [
     {name = "David Hodel", email = "david.hodel@stud.hslu.ch"},
     {name = "Maiko Trede", email = "maiko.trede@stud.hslu.ch"},

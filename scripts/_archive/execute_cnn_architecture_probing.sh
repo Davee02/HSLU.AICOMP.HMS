@@ -18,22 +18,7 @@ models=(
 
 for model in "${models[@]}"
 do
-    python "$SCRIPT_DIR/03_cnn_architecture_probing.py" \
-        --model_name "$model" \
-        --epochs 5 \
-        --batch_size 32 \
-        --lr 1e-3 \
-        --vote_method max_vote_window \
-        --seed 42 \
-        --num_workers 8 \
-        --wandb \
-        --wandb_project hms-aicomp-cnn-architectures
-    echo "Completed $model"
-done
-
-for model in "${models[@]}"
-do
-    python "$SCRIPT_DIR/04_multi_spec_cnn_architecture_probing.py" \
+    python "$SCRIPT_DIR/cnn_architecture_probing.py" \
         --model_name "$model" \
         --epochs 5 \
         --batch_size 32 \
