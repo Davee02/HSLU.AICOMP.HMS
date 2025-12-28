@@ -21,3 +21,5 @@ data/
 /models/
 **/visualizations/*.svg
 **/visualizations/*.png
+
+experiments/
