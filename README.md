@@ -33,7 +33,7 @@ conda activate aicomp-hms
 pip install -r requirements.txt
 ```
 
-Then you need to download the dataset from Kaggle (you need to be logged into your Kaggle account for this step; follow [these instructions](https://www.kaggle.com/docs/api#authentication) if you haven't set up the Kaggle API before):
+Then you need to download the dataset from Kaggle (you need to be logged into your Kaggle account for this step; follow [these instructions](https://www.kaggle.com/docs/api#authentication) and set up authentication using Legacy API Credentials if you haven't set up the Kaggle API before):
 
 ```bash
 python scripts/01_download.py
@@ -42,7 +42,7 @@ python scripts/01_download.py
 After downloading the data, you can preprocess the EEG data by running the following two scripts (caution: the second script takes multiple hours to complete):
 
 ```bash
-python scripts/02_preprocess_eeg_data.py
+python scripts/02_preprocess_eeg_data.py --vote_methods max_vote_window,sum_and_normalize
 python scripts/03_create_eeg_spectrograms.py --spectrogram_types cwt,stft,mel
 ```
 
