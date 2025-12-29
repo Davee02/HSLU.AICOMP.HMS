@@ -46,6 +46,8 @@ python scripts/02_preprocess_eeg_data.py --vote_methods max_vote_window,sum_and_
 python scripts/03_create_eeg_spectrograms.py --spectrogram_types cwt,stft,mel
 ```
 
+You can now execute the notebooks in the `notebooks/models/` folder to train and evaluate models.
+
 ## Contributing
 
 If you want to contribute to the codebase, please install the pre-commit hooks by running:
