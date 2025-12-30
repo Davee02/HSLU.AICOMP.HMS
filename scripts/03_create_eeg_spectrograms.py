@@ -7,7 +7,7 @@ import pandas as pd
 from tqdm import tqdm
 
 sys.path.insert(0, Path(__file__).parent.parent.absolute().as_posix())
-from src.utils.data_utils import load_middle_50_seconds_of_eeg  # noqa: E402
+from src.utils.utils import load_middle_50_seconds_of_eeg  # noqa: E402
 from src.utils.eeg_spectrogram_creator import EEGSpectrogramGenerator  # noqa: E402
 
 if __name__ == "__main__":

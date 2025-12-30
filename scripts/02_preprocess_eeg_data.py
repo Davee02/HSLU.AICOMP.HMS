@@ -56,5 +56,9 @@ if __name__ == "__main__":
 
         processed_df = processor.process_data(vote_method=vote_method, skip_parquet=skip_parquet)
 
+        csv_file_name = "processed_data_max_vote_window" if vote_method == "max_vote_window" else "processed_data_sum_votes_window"
+        
+        processed_df.to_csv(data_path / f"{csv_file_name}.csv")
+
         print(f"\nFinal Data Head ({vote_method}):")
         print(processed_df.head())
